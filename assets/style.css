@@ -5,6 +5,10 @@
    serif de display + mono para sinais técnicos.
    ========================================================= */
 
+/* Fontes via Google Fonts (@import deve vir antes de qualquer regra).
+   Fraunces nos títulos · IBM Plex Mono nos detalhes/kicker/tags. */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
 /* ---------- Tokens ---------- */
 :root {
   /* Cor — dark, sóbrio, um acento carmim/caper */
@@ -20,7 +24,7 @@
   --accent-deep:#D5798A;  /* variante clara do carmim — texto do marcador .ph */
 
   /* Tipografia */
-  --serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --serif: "Fraunces", Georgia, "Times New Roman", serif;   /* fonte de título */
   --sans:  "Söhne", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, sans-serif;
   --mono:  "IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, monospace;
 
@@ -39,10 +43,6 @@
   --dur-fast: 180ms;                        /* hovers, micro-interações */
   --dur-med: 650ms;                         /* expansões, reveals */
 }
-
-/* Fontes via Google Fonts (Newsreader + IBM Plex Mono).
-   Sans cai no system stack — leve e neutro, sem AI slop. */
-@import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
 /* ---------- Reset ---------- */
 *, *::before, *::after { box-sizing: border-box; }
