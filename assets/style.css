@@ -128,7 +128,88 @@ p { color: var(--ink-soft); }
 .btn:hover .arrow { transform: translateX(3px); }
 
 /* ---------- Hero ---------- */
-.hero { padding-block: clamp(var(--s-8), 12vw, var(--s-10)) var(--s-9); }
+.hero { position: relative; padding-block: clamp(var(--s-8), 12vw, var(--s-10)) var(--s-9); }
+/* grade base — linhas finas 1px, off-white a baixíssima opacidade (estática por padrão).
+   Preenche todo o hero, inclusive o lado direito vazio. O texto fica acima e protagonista. */
+.hero::before {
+  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    repeating-linear-gradient(to right,  color-mix(in srgb, var(--ink) 6%, transparent) 0 1px, transparent 1px 64px),
+    repeating-linear-gradient(to bottom, color-mix(in srgb, var(--ink) 6%, transparent) 0 1px, transparent 1px 64px);
+}
+.hero > .wrap { position: relative; z-index: 1; }   /* conteúdo do hero acima da grade */
+
+/* ============================================================================
+   MOVIMENTO DA GRADE DO HERO — TESTE (descomente UMA variação por vez).
+   Ativa agora: A. Todas são sutis e respeitam prefers-reduced-motion (estáticas).
+   Se comentar as três, a grade fica estática.
+   ============================================================================ */
+
+/* —— Variação A · Desenho no load (as linhas se desenham 1x, depois estáticas) ——
+.hero::before {
+  clip-path: inset(0 100% 0 0);
+  animation: grid-draw 1.6s var(--ease) .15s forwards;
+}
+@keyframes grid-draw { to { clip-path: inset(0 0 0 0); } }
+*/
+
+/* —— Variação B · Oscilação (respiração de opacidade, contínua e lenta) ——
+.hero::before { animation: grid-breathe 7s ease-in-out infinite; }
+@keyframes grid-breathe { 0%, 100% { opacity: .5; } 50% { opacity: 1; } }
+*/
+
+/* —— Variação C · Glow carmim suave deslizando pela grade (contínuo, discreto) ——
+.hero::after {
+  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: radial-gradient(35% 55% at 50% 50%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%);
+  background-repeat: no-repeat; background-size: 60% 100%; background-position: -20% 50%;
+  mix-blend-mode: screen;
+  animation: grid-glow 18s ease-in-out infinite;
+}
+@keyframes grid-glow { 0%, 100% { background-position: -20% 50%; } 50% { background-position: 120% 50%; } }
+*/
+
+/* —— Variação D · Fusão A+C: a grade se desenha pelos 4 cantos (intercalados, em
+      velocidades diferentes) e, ao completar, o glow carmim surge deslizando —— */
+.hero::before {
+  -webkit-mask-image:
+    radial-gradient(circle, #000 70%, transparent 72%), radial-gradient(circle, #000 70%, transparent 72%),
+    radial-gradient(circle, #000 70%, transparent 72%), radial-gradient(circle, #000 70%, transparent 72%);
+          mask-image:
+    radial-gradient(circle, #000 70%, transparent 72%), radial-gradient(circle, #000 70%, transparent 72%),
+    radial-gradient(circle, #000 70%, transparent 72%), radial-gradient(circle, #000 70%, transparent 72%);
+  -webkit-mask-repeat: no-repeat;  mask-repeat: no-repeat;
+  -webkit-mask-position: top left, top right, bottom right, bottom left;
+          mask-position: top left, top right, bottom right, bottom left;
+  -webkit-mask-size: 0% 0%, 0% 0%, 0% 0%, 0% 0%;
+          mask-size: 0% 0%, 0% 0%, 0% 0%, 0% 0%;
+  animation: grid-corners 2.4s var(--ease) .15s forwards;
+}
+/* cada canto num ritmo bem distinto (intercalado):
+   TL rápido · TR lento · BR médio-rápido · BL médio-lento — todos completam no fim */
+@keyframes grid-corners {
+  0%   { -webkit-mask-size: 0% 0%,       0% 0%,       0% 0%,       0% 0%;
+                 mask-size: 0% 0%,       0% 0%,       0% 0%,       0% 0%; }
+  25%  { -webkit-mask-size: 120% 120%,   25% 25%,     70% 70%,     45% 45%;
+                 mask-size: 120% 120%,   25% 25%,     70% 70%,     45% 45%; }
+  50%  { -webkit-mask-size: 210% 210%,   60% 60%,     150% 150%,   95% 95%;
+                 mask-size: 210% 210%,   60% 60%,     150% 150%,   95% 95%; }
+  75%  { -webkit-mask-size: 235% 235%,   130% 130%,   225% 225%,   170% 170%;
+                 mask-size: 235% 235%,   130% 130%,   225% 225%,   170% 170%; }
+  100% { -webkit-mask-size: 245% 245%,   245% 245%,   245% 245%,   245% 245%;
+                 mask-size: 245% 245%,   245% 245%,   245% 245%,   245% 245%; }
+}
+.hero::after {
+  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: 0;
+  background: radial-gradient(35% 55% at 50% 50%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%);
+  background-repeat: no-repeat; background-size: 60% 100%; background-position: -20% 50%;
+  mix-blend-mode: screen;
+  /* o glow só surge quando a grade termina de entrar (delay ≈ desenho dos cantos) */
+  animation: glow-in 1.2s var(--ease) 2.5s forwards, grid-glow 18s ease-in-out 2.5s infinite;
+}
+@keyframes glow-in { to { opacity: 1; } }
+@keyframes grid-glow { 0%, 100% { background-position: -20% 50%; } 50% { background-position: 120% 50%; } }
+
 .hero .label { margin-bottom: var(--s-5); }
 .hero h1 { max-width: 17ch; margin-bottom: var(--s-5); }
 .hero .lead { margin-bottom: var(--s-7); }
@@ -139,7 +220,12 @@ p { color: var(--ink-soft); }
 .reveal:nth-child(1){animation-delay:.05s} .reveal:nth-child(2){animation-delay:.15s}
 .reveal:nth-child(3){animation-delay:.25s} .reveal:nth-child(4){animation-delay:.35s}
 @keyframes rise { to { opacity: 1; transform: none; } }
-@media (prefers-reduced-motion: reduce){ .reveal{animation:none;opacity:1;transform:none} }
+@media (prefers-reduced-motion: reduce){
+  .reveal{animation:none;opacity:1;transform:none}
+  /* grade do hero estática em qualquer variação: sem desenho/cantos, sem respiração, sem glow */
+  .hero::before{animation:none;opacity:1;clip-path:none;-webkit-mask:none;mask:none}
+  .hero::after{animation:none}
+}
 
 /* ---------- Section head ---------- */
 .sec-head { display: flex; align-items: baseline; justify-content: space-between;
